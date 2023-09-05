@@ -1,8 +1,9 @@
 #include <iostream>
 #include <vector>
 
-void friends_birthdays_initialization(std::string& name_friend, std::vector <std::string>& name, std::vector <int>& day, std::vector <int>& month, std::vector <int>& year) {
+void friends_birthdays_initialization(std::vector <std::string>& vec_name, std::vector <int>& vec_day, std::vector <int>& vec_month, std::vector <int>& vec_year) {
 
+	std::string name_friend;
 	int day_Bith;
 	int month_Bith;
 	int year_Bith;
@@ -17,29 +18,35 @@ void friends_birthdays_initialization(std::string& name_friend, std::vector <std
 			std::cout << "Enter the full date of birth, including the month and year, in the format year/month/day:\n";
 			std::cin >> year_Bith >> month_Bith >> day_Bith;
 
-			name.push_back(name_friend);
-			day.push_back(day_Bith);
-			month.push_back(month_Bith);
-			year.push_back(year_Bith);
+			vec_name.push_back(name_friend);
+			vec_day.push_back(day_Bith);
+			vec_month.push_back(month_Bith);
+			vec_year.push_back(year_Bith);
 		}
 
 	} while (name_friend != "end");
 }
 
-int main() {
-
-	std::string name_friend;
+int main() {	
 	
-	std::vector <std::string> name(0);
-	std::vector <int> day(0); 
-	std::vector <int> month(0);
-	std::vector <int> year(0);
+	std::vector <std::string> vec_name(0);
+	std::vector <int> vec_day(0); 
+	std::vector <int> vec_month(0);
+	std::vector <int> vec_year(0);
 
-	friends_birthdays_initialization(name_friend, name, day, month, year);
+	friends_birthdays_initialization(vec_name, vec_day, vec_month, vec_year);
 	
-	for (int i = 0; i < day.size(); ++i) {
+	std::time_t data = std::time(nullptr);
+	std::tm today;
+	localtime_s(&today, &data);
+	++today.tm_mon;
+	today.tm_year = today.tm_year + 1900;
 
-		std::cout << name[i] << " " << year[i] << "/" << month[i] << "/" << day[i] << std::endl;
+	std::cout << today.tm_year << "/" << today.tm_mon << "/" << today.tm_mday << std::endl;
+
+	for (int i = 0; i < vec_day.size(); ++i) {
+
+		std::cout << vec_name[i] << " " << vec_year[i] << "/" << vec_month[i] << "/" << vec_day[i] << std::endl;
 
 	}
 
