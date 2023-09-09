@@ -1,53 +1,117 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 
-void friends_birthdays_initialization(std::vector <std::string>& vec_name, std::vector <int>& vec_day, std::vector <int>& vec_month, std::vector <int>& vec_year) {
+struct data {
 
-	std::string name_friend;
-	int day_Bith;
-	int month_Bith;
-	int year_Bith;
+	std::string name;
+	int year;
+	int month;
+	int day;
+
+};
+
+void friends_birthdays_initialization(data& friends) {
 
 	do {
 
 		std::cout << "Enter a friend's name: ";
-		std::cin >> name_friend;
+		std::cin >> friends.name;
 
-		if (name_friend != "end") {
+		if (friends.name != "end") {	
 
 			std::cout << "Enter the full date of birth, including the month and year, in the format year/month/day:\n";
-			std::cin >> year_Bith >> month_Bith >> day_Bith;
+			std::cin >> friends.year >> friends.month >> friends.day;	
 
-			vec_name.push_back(name_friend);
-			vec_day.push_back(day_Bith);
-			vec_month.push_back(month_Bith);
-			vec_year.push_back(year_Bith);
+			std::ofstream out_file("save.txt", std::ios::app);
+
+			if (out_file.is_open()) {
+
+				out_file << friends.name << " " << friends.year << " " << friends.month << " " << friends.day << std::endl;
+
+				out_file.close();
+
+			}
+			else {
+
+				std::cout << "WARNING!\n";
+				std::cout << "ERROR!!!\n";
+				std::cout << "File is not open\n";
+
+			}
 		}
 
-	} while (name_friend != "end");
+	} while (friends.name != "end");
 }
+
+void load_friends_birthsday(data& friends, std::tm& today) {
+
+	std::ifstream in_file("save.txt");
+
+	if (in_file.is_open()) {
+
+		
+		while (!in_file.eof()) {
+
+			friends.name = "";
+			friends.month = 13;
+
+			in_file >> friends.name >> friends.year >> friends.month >> friends.day;
+			
+			if (friends.month == today.tm_mon && friends.day == today.tm_mday) {
+
+				std::cout << "Today is " << friends.name << "'s bithsday!!!";
+
+			}
+
+
+
+			if (friends.name == "") {
+
+				break;
+
+			}
+
+			/*std::cout << friends.name<< ": " << friends.year << "/" << friends.month << "/" << friends.day << std::endl;*/
+
+			
+			
+		}
+		
+		in_file.close();
+
+	}
+	else {
+
+		std::cout << "WARNING!\n";
+		std::cout << "ERROR!!!\n";
+		std::cout << "File is not open\n";
+
+	}
+}
+
+void experiment(std::tm& today){
+
+
+	std::cout << today.tm_mon << " " << today.tm_mday << std::endl;
+}
+
 
 int main() {	
 	
-	std::vector <std::string> vec_name(0);
-	std::vector <int> vec_day(0); 
-	std::vector <int> vec_month(0);
-	std::vector <int> vec_year(0);
+	data friends;	
 
-	friends_birthdays_initialization(vec_name, vec_day, vec_month, vec_year);
+	friends_birthdays_initialization(friends);
 	
 	std::time_t data = std::time(nullptr);
 	std::tm today;
 	localtime_s(&today, &data);
-	++today.tm_mon;
 	today.tm_year = today.tm_year + 1900;
+	++today.tm_mon;		
+	
+	load_friends_birthsday(friends, today);
 
-	std::cout << today.tm_year << "/" << today.tm_mon << "/" << today.tm_mday << std::endl;
+	
 
-	for (int i = 0; i < vec_day.size(); ++i) {
-
-		std::cout << vec_name[i] << " " << vec_year[i] << "/" << vec_month[i] << "/" << vec_day[i] << std::endl;
-
-	}
-
+	
 }
